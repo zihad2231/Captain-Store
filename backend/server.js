@@ -30,6 +30,22 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/captain-sto
     });
     console.log('Seeded admin user zihad');
   }
+
+  // Seed existing products from JSON if the DB is empty
+  const Product = require('./models/Product');
+  const productCount = await Product.countDocuments();
+  if (productCount === 0) {
+    const fs = require('fs');
+    const path = require('path');
+    const productsPath = path.join(__dirname, 'data/products.json');
+    if (fs.existsSync(productsPath)) {
+      const productsData = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
+      if (productsData.length > 0) {
+        await Product.insertMany(productsData);
+        console.log(`Seeded ${productsData.length} products from JSON file to MongoDB`);
+      }
+    }
+  }
 })
 .catch(err => console.error('MongoDB connection error:', err));
 
