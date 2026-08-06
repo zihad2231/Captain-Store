@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@captainstore.com",
+    "password": "password123",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "name": "Zihad Hasan",
+    "email": "zihad",
+    "password": "1234",
+    "role": "admin"
+  }
+]

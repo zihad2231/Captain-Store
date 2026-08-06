@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Chronograph Watch",
+    "price": 12500,
+    "description": "A timeless chronograph watch with a genuine leather strap and stainless steel dial.",
+    "category": "Accessories",
+    "stock": 15,
+    "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 2,
+    "name": "Minimalist Leather Backpack",
+    "price": 8900,
+    "description": "Handcrafted premium leather backpack designed for everyday urban commute.",
+    "category": "Bags",
+    "stock": 8,
+    "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 3,
+    "name": "Aviator Sunglasses",
+    "price": 4500,
+    "description": "Classic aviator sunglasses with polarized lenses and a lightweight metal frame.",
+    "category": "Accessories",
+    "stock": 25,
+    "image": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 4,
+    "name": "Premium Cotton T-Shirt",
+    "price": 1500,
+    "description": "Ultra-soft, breathable 100% organic cotton t-shirt for maximum comfort.",
+    "category": "Apparel",
+    "stock": 50,
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 5,
+    "name": "Leather Chelsea Boots",
+    "price": 11000,
+    "description": "Sleek and versatile suede Chelsea boots perfect for both casual and formal occasions.",
+    "category": "Footwear",
+    "stock": 12,
+    "image": "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 6,
+    "name": "Silk Blend Scarf",
+    "price": 2800,
+    "description": "Elegant silk-blend scarf featuring a contemporary geometric pattern.",
+    "category": "Accessories",
+    "stock": 30,
+    "image": "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 7,
+    "name": "Denim Jacket",
+    "price": 6500,
+    "description": "Vintage-inspired denim jacket with a relaxed fit and durable construction.",
+    "category": "Apparel",
+    "stock": 18,
+    "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 8,
+    "name": "Canvas Sneakers",
+    "price": 5200,
+    "description": "Classic white canvas sneakers with comfortable cushioned soles.",
+    "category": "Footwear",
+    "stock": 40,
+    "image": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 9,
+    "name": "Wireless Noise-Canceling Headphones",
+    "price": 25000,
+    "description": "Immersive sound experience with industry-leading noise cancellation technology.",
+    "category": "Electronics",
+    "stock": 5,
+    "image": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 10,
+    "name": "Cashmere Sweater",
+    "price": 14500,
+    "description": "Luxuriously soft cashmere sweater for cold weather elegance.",
+    "category": "Apparel",
+    "stock": 10,
+    "image": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 11,
+    "name": "Slim Fit Chinos",
+    "price": 3800,
+    "description": "Versatile slim-fit chinos crafted from stretch-cotton twill.",
+    "category": "Apparel",
+    "stock": 35,
+    "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 12,
+    "name": "Designer Perfume",
+    "price": 9500,
+    "description": "A captivating fragrance with notes of bergamot, jasmine, and sandalwood.",
+    "category": "Beauty",
+    "stock": 20,
+    "image": "https://images.unsplash.com/photo-1594035910387-fea47714263f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 13,
+    "name": "Leather Wallet",
+    "price": 2200,
+    "description": "Slim bifold leather wallet with RFID blocking technology.",
+    "category": "Accessories",
+    "stock": 45,
+    "image": "https://images.unsplash.com/photo-1627123424574-724758594e93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 14,
+    "name": "Polarized Wayfarers",
+    "price": 5500,
+    "description": "Iconic wayfarer sunglasses with polarized lenses for ultimate UV protection.",
+    "category": "Accessories",
+    "stock": 22,
+    "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 15,
+    "name": "Smart Fitness Watch",
+    "price": 18000,
+    "description": "Advanced smartwatch with health tracking, GPS, and a sleek aluminum body.",
+    "category": "Electronics",
+    "stock": 15,
+    "image": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  }
+]
