@@ -1,25 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-
-const ordersPath = path.join(__dirname, '../data/orders.json');
-
-const readOrders = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(ordersPath, 'utf8', (err, data) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(data));
-    });
-  });
-};
-
-const writeOrders = (data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(ordersPath, JSON.stringify(data, null, 2), 'utf8', (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-};
+const Order = require('../models/Order');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -32,22 +11,28 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'No order items' });
     }
 
-    const orders = await readOrders();
+    const highestOrder = await Order.findOne().sort('-id');
+    const newId = highestOrder ? highestOrder.id + 1 : 1;
 
-    const newOrder = {
-      id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
-      userId, // User ID if logged in
-      orderItems,
-      shippingAddress,
-      totalPrice,
+    // Map orderItems to products array if needed, or just save as is if schema allows
+    const newOrder = await Order.create({
+      id: newId,
+      user_id: userId,
+      products: orderItems, // assuming frontend structure matches loosely or can be stored in mixed/array
+      total: totalPrice,
       status: 'Pending',
-      createdAt: new Date().toISOString()
-    };
+      date: new Date().toISOString()
+    });
 
-    orders.push(newOrder);
-    await writeOrders(orders);
-
-    res.status(201).json(newOrder);
+    // To maintain compatibility with frontend, return mapped object
+    res.status(201).json({
+      id: newOrder.id,
+      userId: newOrder.user_id,
+      orderItems: newOrder.products,
+      totalPrice: newOrder.total,
+      status: newOrder.status,
+      createdAt: newOrder.date
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error creating order' });
@@ -60,9 +45,19 @@ const createOrder = async (req, res) => {
 const getMyOrders = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    const orders = await readOrders();
-    const myOrders = orders.filter(o => o.userId === userId);
-    res.json(myOrders);
+    const orders = await Order.find({ user_id: userId });
+    
+    // Map to frontend expected format
+    const formattedOrders = orders.map(o => ({
+      id: o.id,
+      userId: o.user_id,
+      orderItems: o.products,
+      totalPrice: o.total,
+      status: o.status,
+      createdAt: o.date
+    }));
+    
+    res.json(formattedOrders);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching orders' });
@@ -73,8 +68,17 @@ const getMyOrders = async (req, res) => {
 // @route   GET /api/orders/all
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await readOrders();
-    res.json(orders);
+    const orders = await Order.find({});
+    // Map to frontend expected format
+    const formattedOrders = orders.map(o => ({
+      id: o.id,
+      userId: o.user_id,
+      orderItems: o.products,
+      totalPrice: o.total,
+      status: o.status,
+      createdAt: o.date
+    }));
+    res.json(formattedOrders);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching all orders' });
@@ -87,17 +91,25 @@ const updateOrderStatus = async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
     const { status } = req.body;
-    const orders = await readOrders();
-    const orderIndex = orders.findIndex(o => o.id === orderId);
+    
+    const updatedOrder = await Order.findOneAndUpdate(
+      { id: orderId },
+      { $set: { status: status } },
+      { new: true }
+    );
 
-    if (orderIndex === -1) {
+    if (!updatedOrder) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    orders[orderIndex].status = status || orders[orderIndex].status;
-    await writeOrders(orders);
-
-    res.json(orders[orderIndex]);
+    res.json({
+      id: updatedOrder.id,
+      userId: updatedOrder.user_id,
+      orderItems: updatedOrder.products,
+      totalPrice: updatedOrder.total,
+      status: updatedOrder.status,
+      createdAt: updatedOrder.date
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating order status' });

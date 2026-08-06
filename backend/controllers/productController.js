@@ -1,35 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-
-// Path to the JSON data file
-const dataPath = path.join(__dirname, '../data/products.json');
-
-// Helper function to read data
-const readData = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dataPath, 'utf8', (err, data) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(data));
-    });
-  });
-};
-
-// Helper function to write data
-const writeData = (data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf8', (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-};
+const Product = require('../models/Product');
 
 // @desc    Get all products
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
   try {
-    const products = await readData();
+    const products = await Product.find({});
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -42,8 +18,7 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductById = async (req, res) => {
   try {
-    const products = await readData();
-    const product = products.find(p => p.id === parseInt(req.params.id));
+    const product = await Product.findOne({ id: parseInt(req.params.id) });
     if (product) {
       res.json(product);
     } else {
@@ -66,20 +41,18 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields (name, price, description)' });
     }
 
-    const products = await readData();
-    
-    const newProduct = {
-      id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
+    const highestProduct = await Product.findOne().sort('-id');
+    const newId = highestProduct ? highestProduct.id + 1 : 1;
+
+    const newProduct = await Product.create({
+      id: newId,
       name,
       price: parseFloat(price),
       discountPrice: discountPrice ? parseFloat(discountPrice) : null,
       description,
       isAvailable: isAvailable !== undefined ? isAvailable : true,
       image: image || 'https://via.placeholder.com/600x400'
-    };
-
-    products.push(newProduct);
-    await writeData(products);
+    });
 
     res.status(201).json(newProduct);
   } catch (error) {
@@ -96,17 +69,17 @@ const updateProduct = async (req, res) => {
     const productId = parseInt(req.params.id);
     const updates = req.body;
     
-    const products = await readData();
-    const productIndex = products.findIndex(p => p.id === productId);
+    const updatedProduct = await Product.findOneAndUpdate(
+      { id: productId },
+      { $set: updates },
+      { new: true }
+    );
     
-    if (productIndex === -1) {
+    if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    products[productIndex] = { ...products[productIndex], ...updates, id: productId };
-    await writeData(products);
-
-    res.json(products[productIndex]);
+    res.json(updatedProduct);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating product' });
@@ -119,14 +92,12 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const productId = parseInt(req.params.id);
-    const products = await readData();
-    const filteredProducts = products.filter(p => p.id !== productId);
+    const deletedProduct = await Product.findOneAndDelete({ id: productId });
     
-    if (products.length === filteredProducts.length) {
+    if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    await writeData(filteredProducts);
     res.json({ message: 'Product removed' });
   } catch (error) {
     console.error(error);

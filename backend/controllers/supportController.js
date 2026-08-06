@@ -1,38 +1,22 @@
-const fs = require('fs');
-const path = require('path');
-
-const supportPath = path.join(__dirname, '../data/support.json');
-
-const readTickets = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(supportPath, 'utf8', (err, data) => {
-      if (err) {
-        if (err.code === 'ENOENT') resolve([]);
-        else reject(err);
-      }
-      else {
-        try { resolve(JSON.parse(data) || []); } 
-        catch (e) { resolve([]); }
-      }
-    });
-  });
-};
-
-const writeTickets = (data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(supportPath, JSON.stringify(data, null, 2), 'utf8', (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-};
+const Ticket = require('../models/Ticket');
 
 // @desc    Get all support tickets
 // @route   GET /api/support
 const getAllTickets = async (req, res) => {
   try {
-    const tickets = await readTickets();
-    res.json(tickets);
+    const tickets = await Ticket.find({});
+    // Map to match old JSON structure for frontend
+    const formattedTickets = tickets.map(t => ({
+      id: t.id,
+      userId: t.user_id,
+      customerName: t.customerName || 'Guest',
+      subject: t.subject,
+      message: t.message || '',
+      status: t.status,
+      adminReply: t.adminReply,
+      createdAt: t.date
+    }));
+    res.json(formattedTickets);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching tickets' });
@@ -48,22 +32,30 @@ const createTicket = async (req, res) => {
       return res.status(400).json({ message: 'Please provide subject and message' });
     }
 
-    const tickets = await readTickets();
-    const newTicket = {
-      id: tickets.length > 0 ? Math.max(...tickets.map(t => t.id)) + 1 : 1,
-      userId: userId || null,
-      customerName: customerName || 'Guest',
+    const highestTicket = await Ticket.findOne().sort('-id');
+    const newId = highestTicket ? highestTicket.id + 1 : 1;
+
+    const newTicket = await Ticket.create({
+      id: newId,
+      user_id: userId || null,
       subject,
-      message,
       status: 'Open',
       adminReply: '',
-      createdAt: new Date().toISOString()
-    };
+      date: new Date().toISOString(),
+      message: message,
+      customerName: customerName || 'Guest'
+    });
 
-    tickets.push(newTicket);
-    await writeTickets(tickets);
-
-    res.status(201).json(newTicket);
+    res.status(201).json({
+      id: newTicket.id,
+      userId: newTicket.user_id,
+      customerName: newTicket.customerName || 'Guest',
+      subject: newTicket.subject,
+      message: newTicket.message,
+      status: newTicket.status,
+      adminReply: newTicket.adminReply,
+      createdAt: newTicket.date
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error creating ticket' });
@@ -77,19 +69,26 @@ const replyTicket = async (req, res) => {
     const ticketId = parseInt(req.params.id);
     const { adminReply, status } = req.body;
 
-    const tickets = await readTickets();
-    const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+    const updatedTicket = await Ticket.findOneAndUpdate(
+      { id: ticketId },
+      { $set: { adminReply: adminReply, status: status } },
+      { new: true }
+    );
 
-    if (ticketIndex === -1) {
+    if (!updatedTicket) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
 
-    tickets[ticketIndex].adminReply = adminReply || tickets[ticketIndex].adminReply;
-    tickets[ticketIndex].status = status || tickets[ticketIndex].status;
-
-    await writeTickets(tickets);
-
-    res.json(tickets[ticketIndex]);
+    res.json({
+      id: updatedTicket.id,
+      userId: updatedTicket.user_id,
+      customerName: updatedTicket.customerName || 'Guest',
+      subject: updatedTicket.subject,
+      message: updatedTicket.message,
+      status: updatedTicket.status,
+      adminReply: updatedTicket.adminReply,
+      createdAt: updatedTicket.date
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error replying to ticket' });

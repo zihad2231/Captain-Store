@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -7,6 +9,29 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json()); // Parses incoming JSON requests
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/captain-store')
+.then(async () => {
+  console.log('Connected to MongoDB');
+  
+  // Seed admin user if it doesn't exist
+  const User = require('./models/User');
+  const adminUser = await User.findOne({ email: 'zihad' });
+  if (!adminUser) {
+    const highestUser = await User.findOne().sort('-id');
+    const newId = highestUser ? highestUser.id + 1 : 1;
+    await User.create({
+      id: newId,
+      name: 'Zihad Hasan',
+      email: 'zihad',
+      password: '123456',
+      role: 'admin'
+    });
+    console.log('Seeded admin user zihad');
+  }
+})
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
 const productRoutes = require('./routes/productRoutes');

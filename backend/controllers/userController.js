@@ -1,27 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-
-const usersPath = path.join(__dirname, '../data/users.json');
-
-const readUsers = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(usersPath, 'utf8', (err, data) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(data));
-    });
-  });
-};
+const User = require('../models/User');
 
 // @desc    Get all users (Admin)
 // @route   GET /api/users
 // @access  Admin
 const getAllUsers = async (req, res) => {
   try {
-    const users = await readUsers();
+    const users = await User.find({});
     // Return users without passwords
     const usersWithoutPasswords = users.map(u => {
-      const { password, ...rest } = u;
-      return rest;
+      return { id: u.id, name: u.name, email: u.email, role: u.role };
     });
     res.json(usersWithoutPasswords);
   } catch (error) {

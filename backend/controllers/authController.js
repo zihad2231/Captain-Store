@@ -1,25 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-
-const usersPath = path.join(__dirname, '../data/users.json');
-
-const readUsers = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(usersPath, 'utf8', (err, data) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(data));
-    });
-  });
-};
-
-const writeUsers = (data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(usersPath, JSON.stringify(data, null, 2), 'utf8', (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-};
+const User = require('../models/User');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -32,27 +11,25 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all fields' });
     }
 
-    const users = await readUsers();
-
     // Check if user exists
-    const userExists = users.find(u => u.email === email);
+    const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const newUser = {
-      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+    const highestUser = await User.findOne().sort('-id');
+    const newId = highestUser ? highestUser.id + 1 : 1;
+
+    const newUser = await User.create({
+      id: newId,
       name,
       email,
       password, // In a real app, hash this! (e.g. bcrypt)
       role: 'customer' // Default role
-    };
-
-    users.push(newUser);
-    await writeUsers(users);
+    });
 
     // Return user without password
-    const { password: pw, ...userWithoutPassword } = newUser;
+    const userWithoutPassword = { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role };
     res.status(201).json(userWithoutPassword);
   } catch (error) {
     console.error(error);
@@ -71,13 +48,11 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    const users = await readUsers();
-
     // Check user and password
-    const user = users.find(u => u.email === email && u.password === password);
+    const user = await User.findOne({ email, password });
     
     if (user) {
-      const { password: pw, ...userWithoutPassword } = user;
+      const userWithoutPassword = { id: user.id, name: user.name, email: user.email, role: user.role };
       res.json(userWithoutPassword);
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
