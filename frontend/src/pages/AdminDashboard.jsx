@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import AuthContext from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import Analytics from '../components/admin/Analytics';
 import CustomerProfiles from '../components/admin/CustomerProfiles';
 import OrderManagement from '../components/admin/OrderManagement';
