@@ -48,7 +48,7 @@ const Navbar = () => {
             </li>
             {user && user.role === 'admin' && (
               <li className="nav-item">
-                <Link className="nav-link fw-bold text-primary" to="/add-product">Admin Panel</Link>
+                <Link className="nav-link fw-bold text-primary" to="/admin">Admin Panel</Link>
               </li>
             )}
           </ul>
@@ -61,12 +61,20 @@ const Navbar = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/my-orders">Orders</Link>
                 </li>
+                {user.role === 'admin' && (
+                  <li className="nav-item">
+                    <Link className="nav-link fw-bold text-primary" to="/admin">Admin</Link>
+                  </li>
+                )}
                 <li className="nav-item">
                   <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
               <>
+                <li className="nav-item">
+                  <Link className="nav-link fw-bold text-primary" to="/admin">Admin</Link>
+                </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">Login</Link>
                 </li>
