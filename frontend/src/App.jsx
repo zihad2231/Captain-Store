@@ -13,6 +13,7 @@ import OrderHistory from './pages/OrderHistory';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AddProduct from './pages/AddProduct';
+import AdminDashboard from './pages/AdminDashboard';
 
 import './App.css'; 
 
@@ -35,6 +36,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/add-product" element={<AddProduct />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
                 </Routes>
               </main>
               <Footer />

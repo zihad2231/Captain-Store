@@ -98,3 +98,121 @@ export const getMyOrders = async (userId) => {
     return [];
   }
 };
+
+// --- Admin CRM APIs ---
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(`${API_URL}/users`);
+    if (!response.ok) throw new Error('Failed to fetch users');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getAllUsers:', error);
+    return [];
+  }
+};
+
+export const getAllOrders = async () => {
+  try {
+    const response = await fetch(`${API_URL}/orders/all`);
+    if (!response.ok) throw new Error('Failed to fetch all orders');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getAllOrders:', error);
+    return [];
+  }
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (!response.ok) throw new Error('Failed to update order status');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateOrderStatus:', error);
+    return null;
+  }
+};
+
+export const updateProduct = async (productId, productData) => {
+  try {
+    const response = await fetch(`${API_URL}/products/${productId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(productData)
+    });
+    if (!response.ok) throw new Error('Failed to update product');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateProduct:', error);
+    return null;
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await fetch(`${API_URL}/products/${productId}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Failed to delete product');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in deleteProduct:', error);
+    return null;
+  }
+};
+
+export const getAnalytics = async () => {
+  try {
+    const response = await fetch(`${API_URL}/analytics`);
+    if (!response.ok) throw new Error('Failed to fetch analytics');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getAnalytics:', error);
+    return null;
+  }
+};
+
+export const getTickets = async () => {
+  try {
+    const response = await fetch(`${API_URL}/support`);
+    if (!response.ok) throw new Error('Failed to fetch tickets');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getTickets:', error);
+    return [];
+  }
+};
+
+export const createTicket = async (ticketData) => {
+  try {
+    const response = await fetch(`${API_URL}/support`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ticketData)
+    });
+    if (!response.ok) throw new Error('Failed to create ticket');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in createTicket:', error);
+    return null;
+  }
+};
+
+export const replyTicket = async (ticketId, replyData) => {
+  try {
+    const response = await fetch(`${API_URL}/support/${ticketId}/reply`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(replyData)
+    });
+    if (!response.ok) throw new Error('Failed to reply to ticket');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in replyTicket:', error);
+    return null;
+  }
+};

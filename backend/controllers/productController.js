@@ -88,8 +88,56 @@ const createProduct = async (req, res) => {
   }
 };
 
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Admin
+const updateProduct = async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id);
+    const updates = req.body;
+    
+    const products = await readData();
+    const productIndex = products.findIndex(p => p.id === productId);
+    
+    if (productIndex === -1) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    products[productIndex] = { ...products[productIndex], ...updates, id: productId };
+    await writeData(products);
+
+    res.json(products[productIndex]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating product' });
+  }
+};
+
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Admin
+const deleteProduct = async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id);
+    const products = await readData();
+    const filteredProducts = products.filter(p => p.id !== productId);
+    
+    if (products.length === filteredProducts.length) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    await writeData(filteredProducts);
+    res.json({ message: 'Product removed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting product' });
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
-  createProduct
+  createProduct,
+  updateProduct,
+  deleteProduct
 };

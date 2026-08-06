@@ -12,10 +12,16 @@ app.use(express.json()); // Parses incoming JSON requests
 const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const userRoutes = require('./routes/userRoutes');
+const supportRoutes = require('./routes/supportRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/support', supportRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Simple root route
 app.get('/', (req, res) => {
