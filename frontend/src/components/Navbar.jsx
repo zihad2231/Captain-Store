@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
@@ -9,22 +9,7 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
   
-  // Handle scroll for glass effect intensification
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Calculate total items in cart
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -33,20 +18,17 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const navClass = `navbar navbar-expand-lg sticky-top transition-all ${scrolled ? 'py-2 shadow-sm' : 'py-3'}`;
-
   return (
-    <nav className={navClass} style={{ transition: 'all 0.3s ease' }}>
+    <nav className="navbar navbar-expand-lg navbar-light bg-transparent shadow-sm sticky-top">
       <div className="container">
-        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <span className="fs-3">⚓</span>
-          <span>Captain Store</span>
+        <Link className="navbar-brand fw-bold text-uppercase tracking-wider" to="/">
+          CAPTAIN
         </Link>
         <button
-          className="navbar-toggler border-0"
+          className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
+          data-bs-toggle="#navbarNav"
           aria-controls="navbarNav"
           aria-expanded="false"
           aria-label="Toggle navigation"
@@ -54,60 +36,60 @@ const Navbar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto fw-medium">
-            <li className="nav-item mx-1">
-              <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">Explore</Link>
+          <ul className="navbar-nav me-auto">
+            <li className="nav-item">
+              <Link className="nav-link" to="/">Home</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/">Shop</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/">Categories</Link>
             </li>
             {user && user.role === 'admin' && (
-              <li className="nav-item mx-1">
-                <Link className="nav-link text-primary" to="/admin">Dashboard</Link>
+              <li className="nav-item">
+                <Link className="nav-link fw-bold text-primary" to="/admin">Admin Panel</Link>
               </li>
             )}
           </ul>
-          <ul className="navbar-nav ms-auto align-items-center fw-medium gap-2">
+          <ul className="navbar-nav ms-auto align-items-center">
             {user ? (
               <>
-                <li className="nav-item d-none d-lg-block me-3">
-                  <span className="text-muted small">Welcome back,</span> <strong className="text-dark">{user.name.split(' ')[0]}</strong>
+                <li className="nav-item me-3 text-dark d-flex align-items-center">
+                  Welcome,&nbsp;<strong>{user.name}</strong>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/my-orders">Orders</Link>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-link nav-link text-muted" onClick={handleLogout}>Logout</button>
+                  <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login">Sign In</Link>
+                  <Link className="nav-link" to="/login">Login</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="btn btn-primary btn-sm rounded-pill px-4 ms-2" to="/register">Create Account</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="btn btn-outline-danger btn-sm rounded-pill px-4 ms-2" to="/login">Admin Login</Link>
+                  <Link className="nav-link" to="/register">Register</Link>
                 </li>
               </>
             )}
-            
-            <li className="nav-item ms-lg-3 d-flex align-items-center border-start ps-lg-3 py-2 py-lg-0">
+            <li className="nav-item ms-lg-3 mt-2 mt-lg-0 me-2 d-flex align-items-center">
               <button 
-                className="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center" 
+                className="btn btn-outline-secondary border-0" 
                 onClick={toggleTheme}
                 title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                style={{ width: '40px', height: '40px' }}
               >
                 {isDarkMode ? '☀️' : '🌙'}
               </button>
             </li>
             
-            <li className="nav-item ms-2">
-              <Link className="btn btn-dark rounded-circle position-relative p-2 d-flex align-items-center justify-content-center shadow-sm" 
-                    to="/cart" style={{ width: '45px', height: '45px', background: 'var(--brand-primary)' }}>
-                🛒
+            <li className="nav-item ms-lg-1 mt-2 mt-lg-0">
+              <Link className="btn btn-outline-secondary position-relative fw-bold border-0" to="/cart">
+                CART
                 {cartCount > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
                     {cartCount}
                     <span className="visually-hidden">items in cart</span>
                   </span>

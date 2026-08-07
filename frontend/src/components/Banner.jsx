@@ -1,33 +1,22 @@
-import { useState, useEffect } from 'react';
-import { getSettings } from '../services/api';
+import { useState, useContext } from 'react';
+import { SettingsContext } from '../context/SettingsContext';
 
 const Banner = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const [bannerText, setBannerText] = useState('Special Offer: Free Shipping!');
+  const { bannerText } = useContext(SettingsContext);
 
-  useEffect(() => {
-    const fetchBanner = async () => {
-      const settings = await getSettings();
-      if (settings && settings.bannerText) {
-        setBannerText(settings.bannerText);
-      }
-    };
-    fetchBanner();
-  }, []);
-
-  if (!isVisible || !bannerText) return null;
+  if (!isVisible) return null;
 
   return (
-    <div className="bg-primary text-white text-center py-2 position-relative" style={{ zIndex: 1000 }}>
-      <div className="container">
-        <span className="fw-medium">{bannerText}</span>
-        <button 
-          onClick={() => setIsVisible(false)} 
-          className="btn-close btn-close-white position-absolute top-50 end-0 translate-middle-y me-3" 
-          aria-label="Close"
-          style={{ fontSize: '0.75rem' }}
-        ></button>
+    <div className="bg-dark text-light py-2 px-4 d-flex justify-content-between align-items-center">
+      <div className="d-flex w-100 justify-content-center align-items-center text-center">
+        <span>{bannerText}</span>
       </div>
+      <button 
+        className="btn-close btn-close-white" 
+        onClick={() => setIsVisible(false)}
+        aria-label="Close"
+      ></button>
     </div>
   );
 };

@@ -13,15 +13,10 @@ const Home = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data);
-        setFilteredProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
+      const data = await getProducts();
+      setProducts(data);
+      setFilteredProducts(data);
+      setLoading(false);
     };
 
     fetchProducts();
@@ -46,34 +41,21 @@ const Home = () => {
 
   return (
     <div className="container py-5">
-      {/* Hero Section */}
-      <div className="row mb-5 py-5 text-center position-relative">
-        <div className="col-12 z-1">
-          <h1 className="display-4 mb-3">Discover True Elegance</h1>
-          <p className="lead text-muted mx-auto" style={{ maxWidth: '600px' }}>
-            Curated fashion and premium lifestyle essentials designed for the modern individual.
-          </p>
+      <div className="row mb-5">
+        <div className="col-12 text-center mt-4">
+          <h1 className="display-4 fw-bold">Discover Elegance</h1>
+          <p className="lead text-muted">Curated fashion and lifestyle essentials for the modern individual.</p>
         </div>
-        {/* Background gradient orb */}
-        <div 
-          className="position-absolute top-50 start-50 translate-middle"
-          style={{
-            width: '600px', height: '600px',
-            background: 'radial-gradient(circle, rgba(233,69,96,0.1) 0%, rgba(0,0,0,0) 70%)',
-            zIndex: 0, pointerEvents: 'none'
-          }}
-        ></div>
       </div>
 
-      {/* Search and Filter Panel (Glassmorphism) */}
-      <div className="row justify-content-center mb-5 position-relative z-1">
-        <div className="col-lg-8">
-          <div className="glass-panel p-4">
-            <div className="row g-3">
+      <div className="row justify-content-center mb-5">
+        <div className="col-md-8">
+          <div className="card shadow-sm border-0 p-3">
+            <div className="row g-2">
               <div className="col-md-8">
                 <input 
                   type="text" 
-                  className="form-control form-control-lg border-0 shadow-sm" 
+                  className="form-control form-control-lg" 
                   placeholder="Search products..." 
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -81,7 +63,7 @@ const Home = () => {
               </div>
               <div className="col-md-4">
                 <select 
-                  className="form-select form-select-lg border-0 shadow-sm" 
+                  className="form-select form-select-lg" 
                   value={category} 
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -96,73 +78,57 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Product Grid */}
       {loading ? (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
-          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
+        <div className="text-center my-5">
+          <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       ) : (
-        <div className="row g-4 position-relative z-1">
+        <div className="row g-4">
           {filteredProducts.length === 0 ? (
-            <div className="col-12 text-center py-5">
-              <div className="p-5 glass-panel d-inline-block">
-                <h3 className="mb-3 text-muted">No products found</h3>
-                <p>Try adjusting your search or filter criteria.</p>
-                <button className="btn btn-outline-primary mt-2" onClick={() => { setSearch(''); setCategory(''); }}>
-                  Clear Filters
-                </button>
-              </div>
+            <div className="col-12 text-center">
+              <p className="text-muted fs-5">No products found matching your criteria.</p>
             </div>
           ) : (
             filteredProducts.map((product) => (
-              <div className="col-md-6 col-lg-4" key={product.id}>
-                <div className="card h-100 border-0">
-                  <div className="card-img-wrapper">
-                    <img src={product.image || 'https://via.placeholder.com/400x300'} alt={product.name} />
-                  </div>
+              <div className="col-md-4" key={product.id}>
+                <div className="card h-100 shadow-sm border-0 transition-hover">
                   <div className="card-body d-flex flex-column">
-                    <div className="d-flex justify-content-between mb-3 mt-1">
-                      <span className="badge badge-primary">{product.category || 'Uncategorized'}</span>
+                    <div className="card-img-wrapper">
+                      <img src={product.image} alt={product.name} />
+                    </div>
+                    <div className="d-flex justify-content-between mb-2 mt-3">
+                      <span className="badge bg-light text-dark border">{product.category || 'Uncategorized'}</span>
                       {product.stock <= 0 ? (
                         <span className="badge bg-danger">Out of Stock</span>
-                      ) : product.stock <= 5 ? (
-                        <span className="badge bg-warning text-dark">Low Stock: {product.stock} left</span>
                       ) : (
-                        <span className="badge bg-success text-white">In Stock: {product.stock}</span>
+                        product.stock <= 5 && <span className="badge bg-warning text-dark">Low Stock</span>
                       )}
                     </div>
-                    
-                    <h5 className="card-title text-truncate mb-2" title={product.name}>
-                      <Link to={`/product/${product.id}`} className="text-decoration-none text-reset">
-                        {product.name}
-                      </Link>
-                    </h5>
-                    
+                    <h5 className="card-title fw-bold mt-2 text-truncate" title={product.name}>{product.name}</h5>
                     <div className="mb-3">
                       {product.discountPrice ? (
-                        <div className="d-flex align-items-center gap-2">
-                          <span className="price-tag">৳ {product.discountPrice.toLocaleString('en-IN')}</span>
+                        <>
+                          <span className="card-subtitle text-primary fs-5 fw-bold me-2">৳ {product.discountPrice.toLocaleString('en-IN')}</span>
                           <span className="text-muted text-decoration-line-through small">৳ {product.price.toLocaleString('en-IN')}</span>
-                        </div>
+                        </>
                       ) : (
-                        <span className="price-tag">৳ {product.price.toLocaleString('en-IN')}</span>
+                        <span className="card-subtitle text-primary fs-5 fw-bold">৳ {product.price.toLocaleString('en-IN')}</span>
                       )}
                     </div>
-                    
-                    <p className="card-text small text-muted flex-grow-1">
-                      {product.description?.length > 70 
-                        ? `${product.description.substring(0, 70)}...` 
+                    <p className="card-text text-muted flex-grow-1">
+                      {product.description.length > 60 
+                        ? `${product.description.substring(0, 60)}...` 
                         : product.description}
                     </p>
                     
-                    <div className="d-flex gap-2 mt-4 pt-3 border-top">
-                      <Link to={`/product/${product.id}`} className="btn btn-outline-secondary flex-grow-1">
-                        View
+                    <div className="d-flex justify-content-between mt-3 gap-2">
+                      <Link to={`/product/${product.id}`} className="btn btn-outline-secondary w-50">
+                        Details
                       </Link>
                       <button 
-                        className="btn btn-primary flex-grow-1"
+                        className="btn btn-primary w-50"
                         onClick={() => addToCart(product)}
                         disabled={product.stock <= 0}
                       >
