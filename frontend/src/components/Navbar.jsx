@@ -39,8 +39,8 @@ const Navbar = () => {
     <nav className={navClass} style={{ transition: 'all 0.3s ease' }}>
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <span className="fs-3">⚡</span>
-          <span>NexCart</span>
+          <span className="fs-3">⚓</span>
+          <span>Captain Store</span>
         </Link>
         <button
           className="navbar-toggler border-0"

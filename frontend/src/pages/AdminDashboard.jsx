@@ -37,7 +37,7 @@ const AdminDashboard = () => {
             <h2 className="fw-bold mb-1" style={{ color: 'var(--brand-primary)' }}>
               Welcome back, {user.name === 'Omar' ? 'Omar 👋' : user.name + ' 👋'}
             </h2>
-            <p className="text-muted mb-0">NexCart Central Control Panel &bull; System Status: <span className="text-success fw-bold">Online</span></p>
+            <p className="text-muted mb-0">Captain Store Central Control Panel &bull; System Status: <span className="text-success fw-bold">Online</span></p>
           </div>
           <div className="d-none d-md-block text-end">
             <div className="small text-muted mb-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>

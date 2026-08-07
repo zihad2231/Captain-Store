@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json()); // Parses incoming JSON requests
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/nexcart')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/captainstore')
 .then(async () => {
   console.log('Connected to MongoDB');
   
@@ -68,7 +68,7 @@ app.use('/api/settings', settingsRoutes);
 
 // Simple root route
 app.get('/', (req, res) => {
-  res.send('Welcome to the NexCart API');
+  res.send('Welcome to the Captain Store API');
 });
 
 // Start the server

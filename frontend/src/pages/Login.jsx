@@ -75,9 +75,9 @@ const Login = () => {
           </form>
           
           <div className="text-center mt-3 border-top pt-4">
-            <p className="text-muted mb-3">
-              New to NexCart? <Link to="/register" className="text-primary fw-bold text-decoration-none">Create an account</Link>
-            </p>
+            <div className="text-center mt-4 pt-3 border-top">
+              New to Captain Store? <Link to="/register" className="text-primary fw-bold text-decoration-none">Create an account</Link>
+            </div>
             <button 
               type="button"
               className="btn btn-outline-dark btn-sm rounded-pill px-4"

@@ -27,7 +27,7 @@ export const ThemeProvider = ({ children }) => {
     fetchThemeSettings();
 
     // Still keep dark mode preference logic
-    const savedTheme = localStorage.getItem('nexcartTheme');
+    const savedTheme = localStorage.getItem('captainTheme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
       if (savedTheme === 'dark') {
@@ -44,10 +44,10 @@ export const ThemeProvider = ({ children }) => {
       const newMode = !prev;
       if (newMode) {
         document.body.classList.add('dark-mode');
-        localStorage.setItem('nexcartTheme', 'dark');
+        localStorage.setItem('captainTheme', 'dark');
       } else {
         document.body.classList.remove('dark-mode');
-        localStorage.setItem('nexcartTheme', 'light');
+        localStorage.setItem('captainTheme', 'light');
       }
       return newMode;
     });

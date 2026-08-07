@@ -41,7 +41,7 @@ const products = [
   },
   {
     "id": 5,
-    "name": "NexCart Hover Drone Pro",
+    "name": "Captain Hover Drone Pro",
     "price": 75000,
     "discountPrice": 69999,
     "description": "Professional 4K drone with AI obstacle avoidance, follow-me mode, and 10km transmission range.",
