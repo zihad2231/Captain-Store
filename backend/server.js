@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json()); // Parses incoming JSON requests
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/captain-store')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/nexcart')
 .then(async () => {
   console.log('Connected to MongoDB');
   
@@ -56,6 +56,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const userRoutes = require('./routes/userRoutes');
 const supportRoutes = require('./routes/supportRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
@@ -63,10 +64,11 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Simple root route
 app.get('/', (req, res) => {
-  res.send('Welcome to the Captain Store API');
+  res.send('Welcome to the NexCart API');
 });
 
 // Start the server

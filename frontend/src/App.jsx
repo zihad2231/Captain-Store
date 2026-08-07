@@ -14,6 +14,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AddProduct from './pages/AddProduct';
 import AdminDashboard from './pages/AdminDashboard';
+import SupportWidget from './components/common/SupportWidget';
 
 import './App.css'; 
 
@@ -23,7 +24,7 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <Router>
-            <div className="d-flex flex-column min-vh-100 bg-light text-dark">
+            <div className="d-flex flex-column min-vh-100">
               <Banner />
               <Navbar />
               <main className="flex-grow-1">
@@ -40,6 +41,7 @@ function App() {
                 </Routes>
               </main>
               <Footer />
+              <SupportWidget />
             </div>
           </Router>
         </CartProvider>

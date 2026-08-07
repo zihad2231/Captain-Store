@@ -7,7 +7,9 @@ const InventoryControl = () => {
 
   // Form states for adding a new product
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', discountPrice: '', image: '' });
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', discountPrice: '', image: '', stock: 10 });
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -38,17 +40,58 @@ const InventoryControl = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const uploadToImgBB = async (file) => {
+    const apiKey = import.meta.env.VITE_IMGBB_API_KEY || 'YOUR_IMGBB_API_KEY';
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        return data.data.url;
+      }
+      return null;
+    } catch (err) {
+      console.error("ImgBB upload failed", err);
+      return null;
+    }
+  };
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    let imageUrl = newProduct.image;
+    
+    if (imageFile) {
+      setUploadingImage(true);
+      const uploadedUrl = await uploadToImgBB(imageFile);
+      setUploadingImage(false);
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+      }
+    }
+
     const created = await createProduct({
       ...newProduct,
+      image: imageUrl,
       price: parseFloat(newProduct.price),
-      discountPrice: newProduct.discountPrice ? parseFloat(newProduct.discountPrice) : null
+      discountPrice: newProduct.discountPrice ? parseFloat(newProduct.discountPrice) : null,
+      stock: parseInt(newProduct.stock, 10) || 0
     });
     if (created) {
       setProducts([...products, created]);
       setShowAddForm(false);
-      setNewProduct({ name: '', price: '', description: '', discountPrice: '', image: '' });
+      setNewProduct({ name: '', price: '', description: '', discountPrice: '', image: '', stock: 10 });
+      setImageFile(null);
     }
   };
 
@@ -80,9 +123,15 @@ const InventoryControl = () => {
                 <input type="number" className="form-control" placeholder="Discount Price" min="0" step="0.01"
                   value={newProduct.discountPrice} onChange={e => setNewProduct({...newProduct, discountPrice: e.target.value})} />
               </div>
-              <div className="col-md-12">
-                <input type="text" className="form-control" placeholder="Image URL (optional)"
-                  value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} />
+              <div className="col-md-6">
+                <input type="number" className="form-control" placeholder="Stock Quantity" required min="0"
+                  value={newProduct.stock} onChange={e => setNewProduct({...newProduct, stock: e.target.value})} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label mb-1" style={{ fontSize: '0.8rem', color: '#666' }}>Product Image</label>
+                <input type="file" className="form-control" accept="image/*"
+                  onChange={handleImageChange} />
+                {uploadingImage && <small className="text-info">Uploading...</small>}
               </div>
               <div className="col-md-12">
                 <textarea className="form-control" placeholder="Description" required rows="2"
@@ -114,16 +163,21 @@ const InventoryControl = () => {
                 <td>{product.name}</td>
                 <td>${product.price.toFixed(2)}</td>
                 <td>
-                  <span className={`badge ${product.isAvailable ? 'bg-success' : 'bg-danger'}`}>
-                    {product.isAvailable ? 'In Stock' : 'Out of Stock'}
+                  <span className={`badge ${product.stock > 0 ? 'bg-success' : 'bg-danger'}`}>
+                    {product.stock > 0 ? `${product.stock} in Stock` : 'Out of Stock'}
                   </span>
                 </td>
                 <td>
                   <button 
-                    className={`btn btn-sm me-2 ${product.isAvailable ? 'btn-outline-warning' : 'btn-outline-success'}`}
-                    onClick={() => handleToggleAvailability(product)}
+                    className={`btn btn-sm me-2 ${product.stock > 0 ? 'btn-outline-warning' : 'btn-outline-success'}`}
+                    onClick={async () => {
+                      const updated = await updateProduct(product.id, { stock: product.stock > 0 ? 0 : 10 });
+                      if (updated) {
+                        setProducts(products.map(p => (p.id === product.id ? updated : p)));
+                      }
+                    }}
                   >
-                    {product.isAvailable ? 'Mark Out of Stock' : 'Mark In Stock'}
+                    {product.stock > 0 ? 'Mark Out of Stock' : 'Mark In Stock'}
                   </button>
                   <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(product.id)}>
                     Delete

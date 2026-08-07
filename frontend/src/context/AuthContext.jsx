@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
   // Check local storage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('captainUser');
+    const storedUser = localStorage.getItem('nexcartUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -15,12 +15,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem('captainUser', JSON.stringify(userData));
+    localStorage.setItem('nexcartUser', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('captainUser');
+    localStorage.removeItem('nexcartUser');
   };
 
   return (

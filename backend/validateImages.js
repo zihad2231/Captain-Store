@@ -1,4 +1,7 @@
-[
+const fs = require('fs');
+const https = require('https');
+
+const products = [
   {
     "id": 1,
     "name": "NexVision VR Headset 3.0",
@@ -6,7 +9,7 @@
     "discountPrice": 39999,
     "description": "Immerse yourself in stunning 8K virtual reality with ultra-low latency tracking and spatial audio.",
     "category": "Gaming",
-    "stock": 2,
+    "stock": 10,
     "image": "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
@@ -15,7 +18,7 @@
     "price": 12500,
     "description": "Wireless mechanical keyboard with haptic feedback, custom RGB, and silent linear switches.",
     "category": "Peripherals",
-    "stock": 4,
+    "stock": 25,
     "image": "https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
@@ -47,6 +50,24 @@
     "image": "https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
+    "id": 6,
+    "name": "HoloDisplay Smart Projector",
+    "price": 42000,
+    "description": "Portable 4K laser projector capable of rendering 3D holograms with built-in Android TV.",
+    "category": "Entertainment",
+    "stock": 12,
+    "image": "https://images.unsplash.com/photo-1588698188168-5a6b0c2a5105?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 7,
+    "name": "CyberLink Ergonomic Mouse",
+    "price": 5500,
+    "description": "Vertical ergonomic mouse designed to eliminate wrist strain during long coding sessions.",
+    "category": "Peripherals",
+    "stock": 40,
+    "image": "https://images.unsplash.com/photo-1615663245857-ac1eeb536624?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
     "id": 8,
     "name": "Nova Smart Desk Lamp",
     "price": 3800,
@@ -54,6 +75,15 @@
     "category": "Smart Home",
     "stock": 35,
     "image": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": 9,
+    "name": "Titanium Fitness Ring",
+    "price": 18000,
+    "description": "Ultra-lightweight titanium smart ring that tracks sleep, heart rate, and body temperature.",
+    "category": "Wearables",
+    "stock": 20,
+    "image": "https://images.unsplash.com/photo-1599643478524-fb66f72199b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
     "id": 10,
@@ -156,4 +186,31 @@
     "stock": 35,
     "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   }
-]
+];
+
+const checkUrl = (url) => {
+  return new Promise((resolve) => {
+    https.get(url, (res) => {
+      resolve(res.statusCode === 200 || res.statusCode === 302 || res.statusCode === 301);
+    }).on('error', () => resolve(false));
+  });
+};
+
+async function run() {
+  const validProducts = [];
+  for (let i = 0; i < products.length; i++) {
+    console.log(`Checking ${products[i].name}...`);
+    const isValid = await checkUrl(products[i].image);
+    if (isValid) {
+      validProducts.push(products[i]);
+    } else {
+      console.log(`Failed: ${products[i].name}`);
+    }
+  }
+  
+  // Save to file
+  fs.writeFileSync('data/products.json', JSON.stringify(validProducts, null, 2));
+  console.log(`Saved ${validProducts.length} valid products.`);
+}
+
+run();

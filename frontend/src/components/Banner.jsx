@@ -1,21 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getSettings } from '../services/api';
 
 const Banner = () => {
   const [isVisible, setIsVisible] = useState(true);
+  const [bannerText, setBannerText] = useState('Special Offer: Free Shipping!');
 
-  if (!isVisible) return null;
+  useEffect(() => {
+    const fetchBanner = async () => {
+      const settings = await getSettings();
+      if (settings && settings.bannerText) {
+        setBannerText(settings.bannerText);
+      }
+    };
+    fetchBanner();
+  }, []);
+
+  if (!isVisible || !bannerText) return null;
 
   return (
-    <div className="bg-dark text-light py-2 px-4 d-flex justify-content-between align-items-center">
-      <div className="d-flex w-100 justify-content-center align-items-center text-center">
-        <span className="fw-bold me-2">SPECIAL OFFER:</span> 
-        <span>Get 20% off all Premium Watches! Use code <span className="text-warning fw-bold">CAPTAIN20</span></span>
+    <div className="bg-primary text-white text-center py-2 position-relative" style={{ zIndex: 1000 }}>
+      <div className="container">
+        <span className="fw-medium">{bannerText}</span>
+        <button 
+          onClick={() => setIsVisible(false)} 
+          className="btn-close btn-close-white position-absolute top-50 end-0 translate-middle-y me-3" 
+          aria-label="Close"
+          style={{ fontSize: '0.75rem' }}
+        ></button>
       </div>
-      <button 
-        className="btn-close btn-close-white" 
-        onClick={() => setIsVisible(false)}
-        aria-label="Close"
-      ></button>
     </div>
   );
 };

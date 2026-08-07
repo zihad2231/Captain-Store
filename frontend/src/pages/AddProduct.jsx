@@ -9,9 +9,11 @@ const AddProduct = () => {
     discountPrice: '',
     description: '',
     image: '',
-    isAvailable: true
+    stock: 10
   });
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -23,13 +25,63 @@ const AddProduct = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const uploadToImgBB = async (file) => {
+    // You should use your actual ImgBB API key here or in .env
+    const apiKey = import.meta.env.VITE_IMGBB_API_KEY || 'YOUR_IMGBB_API_KEY';
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        return data.data.url;
+      }
+      return null;
+    } catch (err) {
+      console.error("ImgBB upload failed", err);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
     try {
-      const result = await createProduct(formData);
+      let imageUrl = formData.image;
+      if (imageFile) {
+        setUploadingImage(true);
+        const uploadedUrl = await uploadToImgBB(imageFile);
+        setUploadingImage(false);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        } else {
+          setError('Failed to upload image to ImgBB.');
+          setLoading(false);
+          return;
+        }
+      }
+
+      const productToCreate = {
+        ...formData,
+        image: imageUrl,
+        price: parseFloat(formData.price),
+        discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
+        stock: parseInt(formData.stock, 10) || 0
+      };
+
+      const result = await createProduct(productToCreate);
       if (result) {
         navigate('/');
       } else {
@@ -102,16 +154,15 @@ const AddProduct = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="image" className="form-label fw-bold">Image URL</label>
+                  <label htmlFor="imageFile" className="form-label fw-bold">Product Image</label>
                   <input 
-                    type="url" 
+                    type="file" 
                     className="form-control" 
-                    id="image" 
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="https://..."
+                    id="imageFile" 
+                    accept="image/*"
+                    onChange={handleImageChange}
                   />
+                  {uploadingImage && <div className="form-text text-info">Image will be uploaded on submit...</div>}
                 </div>
                 
                 <div className="mb-4">
@@ -128,18 +179,18 @@ const AddProduct = () => {
                   ></textarea>
                 </div>
 
-                <div className="mb-4 form-check">
+                <div className="mb-4">
+                  <label htmlFor="stock" className="form-label fw-bold">Stock Quantity</label>
                   <input 
-                    type="checkbox" 
-                    className="form-check-input" 
-                    id="isAvailable" 
-                    name="isAvailable"
-                    checked={formData.isAvailable}
+                    type="number" 
+                    className="form-control" 
+                    id="stock" 
+                    name="stock"
+                    value={formData.stock}
                     onChange={handleChange}
+                    min="0"
+                    required
                   />
-                  <label className="form-check-label fw-bold" htmlFor="isAvailable">
-                    In Stock
-                  </label>
                 </div>
                 
                 <button 

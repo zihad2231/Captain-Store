@@ -1,4 +1,4 @@
-const API_URL = "https://captain-store.onrender.com/api";
+const API_URL = "http://localhost:5000/api";
 
 // --- Products ---
 export const getProducts = async () => {
@@ -213,6 +213,33 @@ export const replyTicket = async (ticketId, replyData) => {
     return await response.json();
   } catch (error) {
     console.error('Error in replyTicket:', error);
+    return null;
+  }
+};
+
+// --- Settings ---
+export const getSettings = async () => {
+  try {
+    const response = await fetch(`${API_URL}/settings`);
+    if (!response.ok) throw new Error('Failed to fetch settings');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getSettings:', error);
+    return { activeTheme: 'default', bannerText: 'Welcome to Captain Store!' };
+  }
+};
+
+export const updateSettings = async (settingsData) => {
+  try {
+    const response = await fetch(`${API_URL}/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settingsData)
+    });
+    if (!response.ok) throw new Error('Failed to update settings');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateSettings:', error);
     return null;
   }
 };
