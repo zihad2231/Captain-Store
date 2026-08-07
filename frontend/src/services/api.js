@@ -187,6 +187,17 @@ export const getTickets = async () => {
   }
 };
 
+export const getUserTickets = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/support/user/${userId}`);
+    if (!response.ok) throw new Error('Failed to fetch user tickets');
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getUserTickets:', error);
+    return [];
+  }
+};
+
 export const createTicket = async (ticketData) => {
   try {
     const response = await fetch(`${API_URL}/support`, {

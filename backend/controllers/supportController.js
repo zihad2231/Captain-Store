@@ -23,6 +23,31 @@ const getAllTickets = async (req, res) => {
   }
 };
 
+// @desc    Get user's support tickets
+// @route   GET /api/support/user/:userId
+const getUserTickets = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const tickets = await Ticket.find({ user_id: userId });
+    
+    // Map to match frontend structure
+    const formattedTickets = tickets.map(t => ({
+      id: t.id,
+      userId: t.user_id,
+      customerName: t.customerName || 'Guest',
+      subject: t.subject,
+      message: t.message || '',
+      status: t.status,
+      reply: t.adminReply, // Widget expects `reply`
+      createdAt: t.date
+    }));
+    res.json(formattedTickets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user tickets' });
+  }
+};
+
 // @desc    Create a new support ticket
 // @route   POST /api/support
 const createTicket = async (req, res) => {
@@ -97,6 +122,7 @@ const replyTicket = async (req, res) => {
 
 module.exports = {
   getAllTickets,
+  getUserTickets,
   createTicket,
   replyTicket
 };
