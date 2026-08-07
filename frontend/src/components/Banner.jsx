@@ -1,9 +1,19 @@
-import { useState, useContext } from 'react';
-import { SettingsContext } from '../context/SettingsContext';
+import { useState, useEffect } from 'react';
+import { getSettings } from '../services/api';
 
 const Banner = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const { bannerText } = useContext(SettingsContext);
+  const [bannerText, setBannerText] = useState('SPECIAL OFFER: Get 20% off all Premium Watches! Use code CAPTAIN20');
+
+  useEffect(() => {
+    const fetchBanner = async () => {
+      const settings = await getSettings();
+      if (settings && settings.bannerText) {
+        setBannerText(settings.bannerText);
+      }
+    };
+    fetchBanner();
+  }, []);
 
   if (!isVisible) return null;
 
