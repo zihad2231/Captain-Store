@@ -229,3 +229,31 @@ h1, h2, h3, h4, h5, h6 {
 .bg-white {
   background-color: var(--brand-white) !important;
 }
+
+/* Stylish Theme - Light Mode */
+body.theme-stylish {
+  --brand-dark: #4f46e5;
+  --brand-dark-grey: #312e81;
+  --brand-gold: #06b6d4;
+  --brand-gold-hover: #0891b2;
+  --brand-light: #f0fdfa;
+  --brand-white: #ffffff;
+  --brand-text-main: #0f172a;
+  --brand-text-muted: #475569;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(6, 182, 212, 0.3);
+}
+
+/* Stylish Theme - Dark Mode */
+body.theme-stylish.dark-mode {
+  --brand-dark: #818cf8;
+  --brand-dark-grey: #c7d2fe;
+  --brand-gold: #22d3ee;
+  --brand-gold-hover: #67e8f9;
+  --brand-light: #020617;
+  --brand-white: #0f172a;
+  --brand-text-main: #f8fafc;
+  --brand-text-muted: #cbd5e1;
+  --glass-bg: rgba(15, 23, 42, 0.85);
+  --glass-border: rgba(34, 211, 238, 0.2);
+}
