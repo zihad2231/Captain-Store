@@ -35,9 +35,9 @@ const getProductById = async (req, res) => {
 // @access  Public
 const createProduct = async (req, res) => {
   try {
-    const { name, price, description, discountPrice, isAvailable, image } = req.body;
+    const { name, price, category, description, discountPrice, stock, image } = req.body;
     
-    if (!name || !price || !description) {
+    if (!name || !price || !description || !category) {
       return res.status(400).json({ message: 'Please provide all required fields (name, price, description)' });
     }
 
@@ -49,8 +49,9 @@ const createProduct = async (req, res) => {
       name,
       price: parseFloat(price),
       discountPrice: discountPrice ? parseFloat(discountPrice) : null,
+      category,
       description,
-      isAvailable: isAvailable !== undefined ? isAvailable : true,
+      stock: stock !== undefined ? parseInt(stock) : 10,
       image: image || 'https://via.placeholder.com/600x400'
     });
 
